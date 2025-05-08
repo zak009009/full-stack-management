@@ -1,34 +1,45 @@
-
-import React from 'react';
-import { useAuth } from '@/context/AuthContext';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { PlusCircle, Calendar } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useAuth } from "@/context/AuthContext";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { PlusCircle, Calendar } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const WelcomeBanner: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  
+
   if (!user) return null;
-  
+
   // Get current time to display appropriate greeting
   const currentHour = new Date().getHours();
-  let greeting = "Good morning";
-  
+  let greeting = "Bonjour";
+
   if (currentHour >= 12 && currentHour < 18) {
-    greeting = "Good afternoon";
+    greeting = "Bon après-midi";
   } else if (currentHour >= 18) {
-    greeting = "Good evening";
+    greeting = "Bonsoir";
   }
 
   // Determine primary action based on user role
-  let primaryAction = { label: "Request Leave", icon: Calendar, path: "/leave-requests/new" };
-  
-  if (user.role === 'admin') {
-    primaryAction = { label: "Add Announcement", icon: PlusCircle, path: "/announcements/new" };
-  } else if (user.role === 'dean') {
-    primaryAction = { label: "Approve Requests", icon: Calendar, path: "/leave-requests" };
+  let primaryAction = {
+    label: "Demander une permission",
+    icon: Calendar,
+    path: "/leave-requests/new",
+  };
+
+  if (user.role === "admin") {
+    primaryAction = {
+      label: "Ajouter une annonce",
+      icon: PlusCircle,
+      path: "/announcements/new",
+    };
+  } else if (user.role === "dean") {
+    primaryAction = {
+      label: "Approuver les demandes",
+      icon: Calendar,
+      path: "/leave-requests",
+    };
   }
 
   return (
@@ -40,12 +51,13 @@ const WelcomeBanner: React.FC = () => {
               {greeting}, {user.name}
             </h1>
             <p className="text-primary-foreground/80">
-              Welcome to your {user.role} dashboard. Here's an overview of your activities.
+              Bienvenu a votre role {user.role} dashboard. Ici vous pouvez
+              visualiser vos activites
             </p>
           </div>
-          <Button 
-            variant="secondary" 
-            size="lg" 
+          <Button
+            variant="secondary"
+            size="lg"
             onClick={() => navigate(primaryAction.path)}
             className="shadow-md"
           >

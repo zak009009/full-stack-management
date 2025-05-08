@@ -1,34 +1,42 @@
-
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '@/context/AuthContext';
-import { useToast } from '@/components/ui/use-toast';
-import { Loader2, ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/components/ui/use-toast";
+import { Loader2, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const PasswordResetForm: React.FC = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const { resetPassword, isLoading, error } = useAuth();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       await resetPassword(email);
       toast({
-        title: 'Reset link sent',
-        description: 'Please check your email for password reset instructions',
+        title: "Lien de réinitialisation envoyé",
+        description:
+          "Veuillez vérifier votre email pour les instructions de réinitialisation du mot de passe",
       });
       setSubmitted(true);
     } catch (err) {
       toast({
-        variant: 'destructive',
-        title: 'Reset failed',
-        description: error || 'Unable to send reset instructions',
+        variant: "destructive",
+        title: "Échec de la réinitialisation",
+        description:
+          error || "Impossible d'envoyer les instructions de réinitialisation",
       });
     }
   };
@@ -37,29 +45,31 @@ const PasswordResetForm: React.FC = () => {
     return (
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Check Your Email</CardTitle>
+          <CardTitle>Vérifiez Votre Email</CardTitle>
           <CardDescription>
-            We've sent password reset instructions to {email}
+            Nous avons envoyé les instructions de réinitialisation à {email}
           </CardDescription>
         </CardHeader>
         <CardContent className="text-center">
           <div className="p-6 bg-muted rounded-lg mb-4">
-            <p>Please check your email and follow the instructions to reset your password.</p>
+            <p>
+              Veuillez vérifier votre email et suivre les instructions pour
+              réinitialiser votre mot de passe.
+            </p>
           </div>
           <p className="text-sm text-muted-foreground">
-            Didn't receive an email? Check your spam folder or try again.
+            Vous n'avez pas reçu d'email ? Vérifiez votre dossier spam ou
+            réessayez.
           </p>
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button variant="outline" asChild>
             <Link to="/login">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Login
+              Retour à la connexion
             </Link>
           </Button>
-          <Button onClick={() => setSubmitted(false)}>
-            Try Again
-          </Button>
+          <Button onClick={() => setSubmitted(false)}>Réessayer</Button>
         </CardFooter>
       </Card>
     );
@@ -68,36 +78,35 @@ const PasswordResetForm: React.FC = () => {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Reset Your Password</CardTitle>
+        <CardTitle>Réinitialiser Votre Mot de Passe</CardTitle>
         <CardDescription>
-          Enter your email address and we'll send you instructions to reset your password
+          Entrez votre adresse email et nous vous enverrons les instructions
+          pour réinitialiser votre mot de passe
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium">Email</label>
+            <label htmlFor="email" className="text-sm font-medium">
+              Email
+            </label>
             <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="your.email@campus.edu"
+              placeholder="votre.email@campus.edu"
               required
             />
           </div>
-          <Button 
-            type="submit" 
-            className="w-full" 
-            disabled={isLoading}
-          >
+          <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Sending...
+                Envoi en cours...
               </>
             ) : (
-              'Send Reset Instructions'
+              "Envoyer les Instructions"
             )}
           </Button>
         </form>
@@ -106,7 +115,7 @@ const PasswordResetForm: React.FC = () => {
         <Button variant="link" asChild className="mx-auto">
           <Link to="/login">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Login
+            Retour à la connexion
           </Link>
         </Button>
       </CardFooter>

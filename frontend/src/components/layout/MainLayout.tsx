@@ -64,35 +64,35 @@ const getRoleIcon = (role: UserRole) => {
 // Get menu items based on user role
 const getMenuItems = (role: UserRole) => {
   const commonItems = [
-    { label: "Dashboard", icon: Home, path: "/dashboard" },
-    { label: "Leave Requests", icon: Calendar, path: "/leave-requests" },
+    { label: "Tableau de Bord", icon: Home, path: "/dashboard" },
+    { label: "Demandes de Congé", icon: Calendar, path: "/leave-requests" },
     { label: "Absences", icon: ClipboardList, path: "/absences" },
-    { label: "Salary", icon: DollarSign, path: "/salary" },
-    { label: "Announcements", icon: BellRing, path: "/announcements" },
+    { label: "Salaire", icon: DollarSign, path: "/salary" },
+    { label: "Annonces", icon: BellRing, path: "/announcements" },
   ];
 
   switch (role) {
     case "admin":
       return [
         ...commonItems,
-        { label: "Manage Users", icon: Users, path: "/users" },
+        { label: "Gérer les Utilisateurs", icon: Users, path: "/users" },
       ];
     case "dean":
       return [
         ...commonItems,
-        { label: "Department", icon: Users, path: "/department" },
+        { label: "Département", icon: Users, path: "/department" },
       ];
     case "teacher":
       return [
         ...commonItems,
-        { label: "Research", icon: FileText, path: "/research" },
+        { label: "Recherche", icon: FileText, path: "/research" },
       ];
     case "registrar":
       return commonItems;
     case "librarian":
       return [
         ...commonItems,
-        { label: "Library", icon: BookOpen, path: "/library" },
+        { label: "Bibliothèque", icon: BookOpen, path: "/library" },
       ];
     default:
       return commonItems;
@@ -139,7 +139,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
               >
                 <RoleIcon className="h-5 w-5" />
               </div>
-              <span className="ml-2 font-semibold">Campus Staff Portal</span>
+              <span className="ml-2 font-semibold">Portail du Personnel</span>
             </div>
             <Button
               variant="ghost"
@@ -193,7 +193,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
               onClick={handleLogout}
             >
               <LogOut className="mr-2 h-4 w-4" />
-              Logout
+              Déconnexion
             </Button>
           </div>
         </div>
@@ -236,7 +236,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                 {userNotifications.length === 0 ? (
                   <div className="py-4 px-2 text-center">
                     <p className="text-sm text-muted-foreground">
-                      No new notifications
+                      Aucune nouvelle notification
                     </p>
                   </div>
                 ) : (
@@ -260,7 +260,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                 {userNotifications.length > 0 && (
                   <div className="p-2 text-center border-t">
                     <Button variant="link" size="sm">
-                      Mark all as read
+                      Tout marquer comme lu
                     </Button>
                   </div>
                 )}
@@ -282,15 +282,15 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel>Mon Compte</DropdownMenuLabel>
                 <DropdownMenuItem onClick={() => navigate("/profile")}>
                   <User className="mr-2 h-4 w-4" />
-                  Profile
+                  Profil
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  Logout
+                  Déconnexion
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

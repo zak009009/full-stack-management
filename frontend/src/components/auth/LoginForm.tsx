@@ -120,33 +120,6 @@ const LoginForm: React.FC = () => {
           </Button>
         </form>
       </CardContent>
-      {/* <CardFooter className="flex flex-col space-y-4">
-        <div className="text-sm text-muted-foreground text-center">
-          For demo purposes, you can use the following accounts:
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs w-full">
-          <div className="bg-muted p-2 rounded">
-            <strong>Admin:</strong> admin@campus.edu<br />
-            <strong>Password:</strong> admin123
-          </div>
-          <div className="bg-muted p-2 rounded">
-            <strong>Dean:</strong> dean@campus.edu<br />
-            <strong>Password:</strong> dean123
-          </div>
-          <div className="bg-muted p-2 rounded">
-            <strong>Teacher:</strong> teacher@campus.edu<br />
-            <strong>Password:</strong> teacher123
-          </div>
-          <div className="bg-muted p-2 rounded">
-            <strong>Registrar:</strong> registrar@campus.edu<br />
-            <strong>Password:</strong> registrar123
-          </div>
-          <div className="bg-muted p-2 rounded col-span-1 md:col-span-2 md:mx-auto">
-            <strong>Librarian:</strong> librarian@campus.edu<br />
-            <strong>Password:</strong> library123
-          </div>
-        </div>
-      </CardFooter> */}
     </Card>
   );
 };

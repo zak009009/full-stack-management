@@ -27,14 +27,9 @@ router.post("/login", async (req, res) => {
     // Vérifier le mot de passe
     const isValidPassword = await bcrypt.compare(password, user.mot_de_passe);
     if (!isValidPassword) {
-      console.log("Le hash n'est pas valide !");
-      const hashedPass = bcrypt.hash(password);
-      console.log(hashedPass);
       return res.status(401).json({
         message: "Email ou mot de passe invalide",
       });
-    } else {
-      console.log("Le hash est valide !");
     }
 
     // Générer le token JWT

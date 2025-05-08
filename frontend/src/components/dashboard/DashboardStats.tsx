@@ -74,7 +74,7 @@ const DashboardStats: React.FC = () => {
   // Common stats
   statsCards.push(
     {
-      title: "Leave Requests",
+      title: "Demandes de Congé",
       value: userLeaveRequests.length,
       icon: Calendar,
       color: "bg-blue-100 text-blue-600",
@@ -86,7 +86,7 @@ const DashboardStats: React.FC = () => {
       color: "bg-red-100 text-red-600",
     },
     {
-      title: "Announcements",
+      title: "Annonces",
       value: userAnnouncements.length,
       icon: Bell,
       color: "bg-amber-100 text-amber-600",
@@ -102,7 +102,7 @@ const DashboardStats: React.FC = () => {
   // Role-specific stats
   if (user.role === "admin" || user.role === "dean") {
     statsCards.unshift({
-      title: "Pending Approvals",
+      title: "Approbations en Attente",
       value: pendingLeaves,
       icon: Clock,
       color: "bg-orange-100 text-orange-600",
@@ -111,7 +111,7 @@ const DashboardStats: React.FC = () => {
 
   if (user.role === "admin") {
     statsCards.unshift({
-      title: "Pending Announcements",
+      title: "Annonces en Attente",
       value: pendingAnnouncements,
       icon: Clock,
       color: "bg-yellow-100 text-yellow-600",
@@ -120,7 +120,7 @@ const DashboardStats: React.FC = () => {
 
   if (user.role === "teacher") {
     statsCards.push({
-      title: "Research Projects",
+      title: "Projets de Recherche",
       value: userResearchProjects.length,
       icon: FileText,
       color: "bg-green-100 text-green-600",
@@ -149,7 +149,7 @@ const DashboardStats: React.FC = () => {
       <Card className="dashboard-stat-card col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-4">
         <CardHeader>
           <CardTitle className="text-md font-medium">
-            Leave Request Status
+            État des Demandes de Congé
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -159,7 +159,7 @@ const DashboardStats: React.FC = () => {
                 <CheckCircle2 className="h-5 w-5" />
               </div>
               <div>
-                <div className="text-sm text-muted-foreground">Approved</div>
+                <div className="text-sm text-muted-foreground">Approuvé</div>
                 <div className="text-xl font-semibold">{approvedLeaves}</div>
               </div>
             </div>
@@ -168,7 +168,7 @@ const DashboardStats: React.FC = () => {
                 <Clock className="h-5 w-5" />
               </div>
               <div>
-                <div className="text-sm text-muted-foreground">Pending</div>
+                <div className="text-sm text-muted-foreground">En Attente</div>
                 <div className="text-xl font-semibold">{pendingLeaves}</div>
               </div>
             </div>
@@ -177,7 +177,7 @@ const DashboardStats: React.FC = () => {
                 <XCircle className="h-5 w-5" />
               </div>
               <div>
-                <div className="text-sm text-muted-foreground">Rejected</div>
+                <div className="text-sm text-muted-foreground">Rejeté</div>
                 <div className="text-xl font-semibold">{rejectedLeaves}</div>
               </div>
             </div>

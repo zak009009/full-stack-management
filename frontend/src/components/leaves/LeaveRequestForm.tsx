@@ -1,22 +1,28 @@
-
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
-import { useAuth } from '@/context/AuthContext';
-import { useData } from '@/context/DataContext';
-import { useToast } from '@/components/ui/use-toast';
-import { useNavigate } from 'react-router-dom';
-import { Loader2, Calendar } from 'lucide-react';
+import React, { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useAuth } from "@/context/AuthContext";
+import { useData } from "@/context/DataContext";
+import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
+import { Loader2, Calendar } from "lucide-react";
 
 const LeaveRequestForm: React.FC = () => {
   const { user } = useAuth();
@@ -24,33 +30,35 @@ const LeaveRequestForm: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [reason, setReason] = useState('');
-  const [leaveType, setLeaveType] = useState<'vacation' | 'sick' | 'personal' | 'other'>('vacation');
+
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [reason, setReason] = useState("");
+  const [leaveType, setLeaveType] = useState<
+    "vacation" | "sick" | "personal" | "other"
+  >("vacation");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user) return;
-    
+
     setIsSubmitting(true);
-    
+
     // Validate dates
     const start = new Date(startDate);
     const end = new Date(endDate);
-    
+
     if (end < start) {
       toast({
-        variant: 'destructive',
-        title: 'Invalid date range',
-        description: 'End date must be after start date',
+        variant: "destructive",
+        title: "Plage de dates invalide",
+        description: "La date de fin doit être postérieure à la date de début",
       });
       setIsSubmitting(false);
       return;
     }
-    
+
     // Create the leave request
     addLeaveRequest({
       userId: user.id,
@@ -58,16 +66,16 @@ const LeaveRequestForm: React.FC = () => {
       startDate,
       endDate,
       reason,
-      status: 'pending',
+      status: "pending",
       type: leaveType,
     });
-    
+
     toast({
-      title: 'Leave request submitted',
-      description: 'Your request has been submitted for approval',
+      title: "Demande de congé soumise",
+      description: "Votre demande a été soumise pour approbation",
     });
-    
-    navigate('/leave-requests');
+
+    navigate("/leave-requests");
   };
 
   if (!user) return null;
@@ -75,29 +83,34 @@ const LeaveRequestForm: React.FC = () => {
   return (
     <Card className="max-w-lg mx-auto">
       <CardHeader>
-        <CardTitle>Request Leave</CardTitle>
-        <CardDescription>Submit a new leave request for approval</CardDescription>
+        <CardTitle>Demande de Congé</CardTitle>
+        <CardDescription>
+          Soumettre une nouvelle demande de congé pour approbation
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="leaveType">Leave Type</Label>
-            <Select value={leaveType} onValueChange={(value: any) => setLeaveType(value)}>
+            <Label htmlFor="leaveType">Type de Congé</Label>
+            <Select
+              value={leaveType}
+              onValueChange={(value: any) => setLeaveType(value)}
+            >
               <SelectTrigger id="leaveType">
-                <SelectValue placeholder="Select leave type" />
+                <SelectValue placeholder="Sélectionner le type de congé" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="vacation">Vacation</SelectItem>
-                <SelectItem value="sick">Sick Leave</SelectItem>
-                <SelectItem value="personal">Personal Leave</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                <SelectItem value="vacation">Vacances</SelectItem>
+                <SelectItem value="sick">Congé Maladie</SelectItem>
+                <SelectItem value="personal">Congé Personnel</SelectItem>
+                <SelectItem value="other">Autre</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="startDate">Start Date</Label>
+              <Label htmlFor="startDate">Date de Début</Label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -110,9 +123,9 @@ const LeaveRequestForm: React.FC = () => {
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
-              <Label htmlFor="endDate">End Date</Label>
+              <Label htmlFor="endDate">Date de Fin</Label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -126,36 +139,36 @@ const LeaveRequestForm: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="space-y-2">
-            <Label htmlFor="reason">Reason</Label>
+            <Label htmlFor="reason">Motif</Label>
             <Textarea
               id="reason"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder="Please provide details about your leave request"
+              placeholder="Veuillez fournir des détails sur votre demande de congé"
               required
               rows={4}
             />
           </div>
-          
+
           <div className="pt-4 flex justify-end">
             <Button
               type="button"
               variant="outline"
-              onClick={() => navigate('/leave-requests')}
+              onClick={() => navigate("/leave-requests")}
               className="mr-2"
             >
-              Cancel
+              Annuler
             </Button>
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Submitting...
+                  Envoi en cours...
                 </>
               ) : (
-                'Submit Request'
+                "Soumettre la Demande"
               )}
             </Button>
           </div>
