@@ -1,55 +1,72 @@
-
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { UserRole } from '@/types';
-import { 
-  Users, 
-  Calendar, 
-  ClipboardList, 
-  FileText, 
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { UserRole } from "@/types";
+import {
+  Users,
+  Calendar,
+  ClipboardList,
+  FileText,
   Bell,
   CheckCircle2,
   Clock,
-  XCircle
-} from 'lucide-react';
-import { useData } from '@/context/DataContext';
-import { useAuth } from '@/context/AuthContext';
+  XCircle,
+} from "lucide-react";
+import { useData } from "@/context/DataContext";
+import { useAuth } from "@/context/AuthContext";
 
 const DashboardStats: React.FC = () => {
   const { user } = useAuth();
-  const { leaveRequests, absences, announcements, researchProjects, notifications } = useData();
+  const {
+    leaveRequests,
+    absences,
+    announcements,
+    researchProjects,
+    notifications,
+  } = useData();
 
   if (!user) return null;
 
   // Filter data based on user role and ID
-  const userLeaveRequests = leaveRequests.filter(lr => 
-    user.role === 'admin' || user.role === 'dean' || lr.userId === user.id
+  const userLeaveRequests = leaveRequests.filter(
+    (lr) =>
+      user.role === "admin" || user.role === "dean" || lr.userId === user.id
   );
-  
-  const userAbsences = absences.filter(a => 
-    user.role === 'admin' || user.role === 'dean' || a.userId === user.id
+
+  const userAbsences = absences.filter(
+    (a) => user.role === "admin" || user.role === "dean" || a.userId === user.id
   );
-  
-  const userAnnouncements = announcements.filter(a => 
-    a.forRoles.includes(user.role) || user.role === 'admin' || user.id === a.createdBy
+
+  const userAnnouncements = announcements.filter(
+    (a) =>
+      a.forRoles.includes(user.role) ||
+      user.role === "admin" ||
+      user.id === a.createdBy
   );
-  
-  const userResearchProjects = user.role === 'teacher' ? 
-    researchProjects.filter(rp => rp.userId === user.id || rp.collaborators.includes(user.id)) : 
-    [];
-  
-  const userNotifications = notifications.filter(n => n.userId === user.id);
-  const unreadNotifications = userNotifications.filter(n => !n.read);
+
+  const userResearchProjects =
+    user.role === "teacher"
+      ? researchProjects.filter(
+          (rp) => rp.userId === user.id || rp.collaborators.includes(user.id)
+        )
+      : [];
+
+  const userNotifications = notifications.filter((n) => n.userId === user.id);
+  const unreadNotifications = userNotifications.filter((n) => !n.read);
 
   // Stats based on leave requests
-  const approvedLeaves = userLeaveRequests.filter(lr => lr.status === 'approved').length;
-  const pendingLeaves = userLeaveRequests.filter(lr => lr.status === 'pending').length;
-  const rejectedLeaves = userLeaveRequests.filter(lr => lr.status === 'rejected').length;
+  const approvedLeaves = userLeaveRequests.filter(
+    (lr) => lr.status === "approved"
+  ).length;
+  const pendingLeaves = userLeaveRequests.filter(
+    (lr) => lr.status === "pending"
+  ).length;
+  const rejectedLeaves = userLeaveRequests.filter(
+    (lr) => lr.status === "rejected"
+  ).length;
 
   // Stats based on announcements
-  const pendingAnnouncements = user.role === 'admin' ? 
-    announcements.filter(a => !a.approved).length : 
-    0;
+  const pendingAnnouncements =
+    user.role === "admin" ? announcements.filter((a) => !a.approved).length : 0;
 
   // Stats based on role
   const statsCards = [];
@@ -83,7 +100,7 @@ const DashboardStats: React.FC = () => {
   );
 
   // Role-specific stats
-  if (user.role === 'admin' || user.role === 'dean') {
+  if (user.role === "admin" || user.role === "dean") {
     statsCards.unshift({
       title: "Pending Approvals",
       value: pendingLeaves,
@@ -92,7 +109,7 @@ const DashboardStats: React.FC = () => {
     });
   }
 
-  if (user.role === 'admin') {
+  if (user.role === "admin") {
     statsCards.unshift({
       title: "Pending Announcements",
       value: pendingAnnouncements,
@@ -101,7 +118,7 @@ const DashboardStats: React.FC = () => {
     });
   }
 
-  if (user.role === 'teacher') {
+  if (user.role === "teacher") {
     statsCards.push({
       title: "Research Projects",
       value: userResearchProjects.length,
@@ -131,7 +148,9 @@ const DashboardStats: React.FC = () => {
       {/* Leave Request Status Stats */}
       <Card className="dashboard-stat-card col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-4">
         <CardHeader>
-          <CardTitle className="text-md font-medium">Leave Request Status</CardTitle>
+          <CardTitle className="text-md font-medium">
+            Leave Request Status
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-4">

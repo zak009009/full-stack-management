@@ -1,10 +1,9 @@
-
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,12 +11,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { 
-  Bell, 
-  Menu, 
-  X, 
-  LogOut, 
+} from "@/components/ui/dropdown-menu";
+import {
+  Bell,
+  Menu,
+  X,
+  LogOut,
   User,
   ChevronDown,
   Home,
@@ -27,13 +26,18 @@ import {
   BookOpen,
   FileText,
   DollarSign,
-  BellRing
-} from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { useData } from '@/context/DataContext';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { UserRole } from '@/types';
+  BellRing,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { useData } from "@/context/DataContext";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { UserRole } from "@/types";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -42,15 +46,15 @@ interface MainLayoutProps {
 // Helper function to get the icon for the user role
 const getRoleIcon = (role: UserRole) => {
   switch (role) {
-    case 'admin':
+    case "admin":
       return Users;
-    case 'dean':
+    case "dean":
       return Users;
-    case 'teacher':
+    case "teacher":
       return BookOpen;
-    case 'registrar':
+    case "registrar":
       return ClipboardList;
-    case 'librarian':
+    case "librarian":
       return BookOpen;
     default:
       return User;
@@ -60,35 +64,35 @@ const getRoleIcon = (role: UserRole) => {
 // Get menu items based on user role
 const getMenuItems = (role: UserRole) => {
   const commonItems = [
-    { label: 'Dashboard', icon: Home, path: '/dashboard' },
-    { label: 'Leave Requests', icon: Calendar, path: '/leave-requests' },
-    { label: 'Absences', icon: ClipboardList, path: '/absences' },
-    { label: 'Salary', icon: DollarSign, path: '/salary' },
-    { label: 'Announcements', icon: BellRing, path: '/announcements' },
+    { label: "Dashboard", icon: Home, path: "/dashboard" },
+    { label: "Leave Requests", icon: Calendar, path: "/leave-requests" },
+    { label: "Absences", icon: ClipboardList, path: "/absences" },
+    { label: "Salary", icon: DollarSign, path: "/salary" },
+    { label: "Announcements", icon: BellRing, path: "/announcements" },
   ];
 
   switch (role) {
-    case 'admin':
+    case "admin":
       return [
         ...commonItems,
-        { label: 'Manage Users', icon: Users, path: '/users' },
+        { label: "Manage Users", icon: Users, path: "/users" },
       ];
-    case 'dean':
+    case "dean":
       return [
         ...commonItems,
-        { label: 'Department', icon: Users, path: '/department' },
+        { label: "Department", icon: Users, path: "/department" },
       ];
-    case 'teacher':
+    case "teacher":
       return [
         ...commonItems,
-        { label: 'Research', icon: FileText, path: '/research' },
+        { label: "Research", icon: FileText, path: "/research" },
       ];
-    case 'registrar':
+    case "registrar":
       return commonItems;
-    case 'librarian':
+    case "librarian":
       return [
         ...commonItems,
-        { label: 'Library', icon: BookOpen, path: '/library' },
+        { label: "Library", icon: BookOpen, path: "/library" },
       ];
     default:
       return commonItems;
@@ -100,17 +104,17 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const { notifications } = useData();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  
-  const userNotifications = user 
-    ? notifications.filter(n => n.userId === user.id && !n.read)
+
+  const userNotifications = user
+    ? notifications.filter((n) => n.userId === user.id && !n.read)
     : [];
-  
+
   const menuItems = user ? getMenuItems(user.role) : [];
   const RoleIcon = user ? getRoleIcon(user.role) : User;
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   if (!user) {
@@ -120,7 +124,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen bg-background flex">
       {/* Sidebar */}
-      <aside 
+      <aside
         className={cn(
           "bg-sidebar fixed inset-y-0 left-0 z-30 w-64 transform transition-transform duration-200 ease-in-out lg:translate-x-0 border-r",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -130,13 +134,15 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           {/* Sidebar Header */}
           <div className="flex items-center justify-between h-16 px-4 border-b">
             <div className="flex items-center">
-              <div className={`w-8 h-8 rounded-md flex items-center justify-center role-icon role-${user.role}`}>
+              <div
+                className={`w-8 h-8 rounded-md flex items-center justify-center role-icon role-${user.role}`}
+              >
                 <RoleIcon className="h-5 w-5" />
               </div>
               <span className="ml-2 font-semibold">Campus Staff Portal</span>
             </div>
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="icon"
               className="lg:hidden"
               onClick={() => setSidebarOpen(false)}
@@ -156,7 +162,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                   </Avatar>
                   <div className="ml-2">
                     <p className="text-sm font-medium">{user.name}</p>
-                    <p className="text-xs text-muted-foreground capitalize">{user.role}</p>
+                    <p className="text-xs text-muted-foreground capitalize">
+                      {user.role}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -176,12 +184,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
               </nav>
             </div>
           </ScrollArea>
-          
+
           {/* Sidebar Footer */}
           <div className="border-t p-4">
-            <Button 
-              variant="outline" 
-              className="w-full flex items-center" 
+            <Button
+              variant="outline"
+              className="w-full flex items-center"
               onClick={handleLogout}
             >
               <LogOut className="mr-2 h-4 w-4" />
@@ -192,7 +200,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       </aside>
 
       {/* Main Content */}
-      <div 
+      <div
         className={cn(
           "flex-1 flex flex-col min-h-screen transition-all duration-200 ease-in-out",
           sidebarOpen ? "lg:ml-64" : "ml-0"
@@ -200,8 +208,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       >
         {/* Top Bar */}
         <header className="h-16 border-b bg-white flex items-center px-4 sticky top-0 z-20">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="icon"
             className="lg:hidden"
             onClick={() => setSidebarOpen(true)}
@@ -227,15 +235,17 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                 <DropdownMenuSeparator />
                 {userNotifications.length === 0 ? (
                   <div className="py-4 px-2 text-center">
-                    <p className="text-sm text-muted-foreground">No new notifications</p>
+                    <p className="text-sm text-muted-foreground">
+                      No new notifications
+                    </p>
                   </div>
                 ) : (
                   userNotifications.map((notification) => (
                     <DropdownMenuItem key={notification.id} className="p-0">
-                      <Button 
-                        variant="ghost" 
-                        className="w-full justify-start py-2 px-4 h-auto" 
-                        onClick={() => navigate(notification.link || '#')}
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start py-2 px-4 h-auto"
+                        onClick={() => navigate(notification.link || "#")}
                       >
                         <div className="w-full text-left">
                           <p className="text-sm">{notification.message}</p>
@@ -265,13 +275,15 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                     <AvatarImage src={user.profileImage} alt={user.name} />
                     <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                   </Avatar>
-                  <span className="ml-2 hidden md:inline-block">{user.name}</span>
+                  <span className="ml-2 hidden md:inline-block">
+                    {user.name}
+                  </span>
                   <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuItem onClick={() => navigate('/profile')}>
+                <DropdownMenuItem onClick={() => navigate("/profile")}>
                   <User className="mr-2 h-4 w-4" />
                   Profile
                 </DropdownMenuItem>
@@ -286,9 +298,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 p-6 bg-gray-50">
-          {children}
-        </main>
+        <main className="flex-1 p-6 bg-gray-50">{children}</main>
       </div>
     </div>
   );

@@ -45,22 +45,22 @@ promisePool
 // Routes
 app.use("/auth", authRoutes);
 
-// Basic route for testing
+// Route de test
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to CMS API" });
+  res.json({ message: "Bienvenue sur l'API CMS" });
 });
 
-// Error handling middleware
+// Middleware de gestion des erreurs
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error("Erreur:", err.stack);
   res.status(500).json({
-    status: "error",
-    message: "Something went wrong!",
+    status: "erreur",
+    message: "Une erreur est survenue !",
   });
 });
 
-// Start server
+// Démarrer le serveur
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Le serveur est en cours d'exécution sur le port ${PORT}`);
 });

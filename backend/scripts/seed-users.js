@@ -4,7 +4,7 @@ const pool = require("../config/database");
 
 const users = [
   {
-    nom: "Admin",
+    nom: "Administrateur",
     email: "admin@campus.edu",
     password: "admin123",
     role: "1",
@@ -19,12 +19,12 @@ async function seedUsers() {
         "INSERT INTO utilisateur (id, nom, email, mot_de_passe,role_id) VALUES (null,?, ?, ?,?)",
         [user.nom, user.email, hashedPassword, user.role]
       );
-      console.log(`Created user: ${user.email}`);
+      console.log(`Utilisateur créé : ${user.email}`);
     }
-    console.log("All users created successfully");
+    console.log("Tous les utilisateurs ont été créés avec succès");
     process.exit(0);
   } catch (error) {
-    console.error("Error seeding users:", error);
+    console.error("Erreur lors de la création des utilisateurs:", error);
     process.exit(1);
   }
 }

@@ -1,9 +1,8 @@
-
-import React from 'react';
-import MainLayout from '@/components/layout/MainLayout';
-import { useAuth } from '@/context/AuthContext';
-import { useData } from '@/context/DataContext';
-import { Navigate } from 'react-router-dom';
+import React from "react";
+import MainLayout from "@/components/layout/MainLayout";
+import { useAuth } from "@/context/AuthContext";
+import { useData } from "@/context/DataContext";
+import { Navigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -19,14 +18,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Salary as SalaryType } from '@/types';
+import { Salary as SalaryType } from "@/types";
 
 const Salary: React.FC = () => {
   const { user, isLoading } = useAuth();
   const { salaries } = useData();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Chargement...</div>;
   }
 
   if (!user) {
@@ -34,10 +33,11 @@ const Salary: React.FC = () => {
   }
 
   // Filter salaries based on user role
-  const userSalaries = user.role === 'admin' 
-    ? salaries 
-    : salaries.filter(s => s.userId === user.id);
-  
+  const userSalaries =
+    user.role === "admin"
+      ? salaries
+      : salaries.filter((s) => s.userId === user.id);
+
   // Sort by date (newest first)
   userSalaries.sort((a, b) => {
     if (a.year !== b.year) return b.year - a.year;
@@ -45,16 +45,26 @@ const Salary: React.FC = () => {
   });
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("fr-FR", {
+      style: "currency",
+      currency: "EUR",
     }).format(amount);
   };
 
   const getMonthName = (month: number) => {
     const monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      "Janvier",
+      "Février",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Août",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Décembre",
     ];
     return monthNames[month - 1];
   };
@@ -63,11 +73,11 @@ const Salary: React.FC = () => {
     <MainLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold">Salary Information</h1>
+          <h1 className="text-2xl font-bold">Informations Salariales</h1>
           <p className="text-muted-foreground">
-            {user.role === 'admin' 
-              ? 'Manage staff salary records' 
-              : 'View your salary records'}
+            {user.role === "admin"
+              ? "Gérer les salaires du personnel"
+              : "Consulter vos informations salariales"}
           </p>
         </div>
 
@@ -75,9 +85,9 @@ const Salary: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="md:col-span-3">
             <CardHeader className="pb-3">
-              <CardTitle>Salary Breakdown</CardTitle>
+              <CardTitle>Détail du Salaire</CardTitle>
               <CardDescription>
-                Overview of your salary components
+                Aperçu des composants de votre salaire
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-0">
@@ -85,7 +95,7 @@ const Salary: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   <Card className="bg-muted/50">
                     <CardHeader className="pb-2">
-                      <CardDescription>Base Salary</CardDescription>
+                      <CardDescription>Salaire de Base</CardDescription>
                       <CardTitle className="text-2xl">
                         {formatCurrency(userSalaries[0].amount)}
                       </CardTitle>
@@ -93,7 +103,7 @@ const Salary: React.FC = () => {
                   </Card>
                   <Card className="bg-muted/50">
                     <CardHeader className="pb-2">
-                      <CardDescription>Bonuses</CardDescription>
+                      <CardDescription>Primes</CardDescription>
                       <CardTitle className="text-2xl text-green-600">
                         +{formatCurrency(userSalaries[0].bonuses)}
                       </CardTitle>
@@ -101,7 +111,7 @@ const Salary: React.FC = () => {
                   </Card>
                   <Card className="bg-muted/50">
                     <CardHeader className="pb-2">
-                      <CardDescription>Deductions</CardDescription>
+                      <CardDescription>Déductions</CardDescription>
                       <CardTitle className="text-2xl text-red-600">
                         -{formatCurrency(userSalaries[0].deductions)}
                       </CardTitle>
@@ -109,7 +119,9 @@ const Salary: React.FC = () => {
                   </Card>
                   <Card className="bg-primary text-primary-foreground">
                     <CardHeader className="pb-2">
-                      <CardDescription className="text-primary-foreground/80">Total Pay</CardDescription>
+                      <CardDescription className="text-primary-foreground/80">
+                        Salaire Total
+                      </CardDescription>
                       <CardTitle className="text-2xl">
                         {formatCurrency(userSalaries[0].total)}
                       </CardTitle>
@@ -118,7 +130,7 @@ const Salary: React.FC = () => {
                 </div>
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  No salary information available
+                  Aucune information salariale disponible
                 </div>
               )}
             </CardContent>
@@ -128,24 +140,22 @@ const Salary: React.FC = () => {
         {/* Salary History */}
         <Card>
           <CardHeader>
-            <CardTitle>Salary History</CardTitle>
-            <CardDescription>
-              Your historical salary records
-            </CardDescription>
+            <CardTitle>Historique des Salaires</CardTitle>
+            <CardDescription>Votre historique salarial</CardDescription>
           </CardHeader>
           <CardContent>
             {userSalaries.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
-                No salary history available
+                Aucun historique salarial disponible
               </div>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Period</TableHead>
-                    <TableHead>Base Salary</TableHead>
-                    <TableHead>Bonuses</TableHead>
-                    <TableHead>Deductions</TableHead>
+                    <TableHead>Période</TableHead>
+                    <TableHead>Salaire de Base</TableHead>
+                    <TableHead>Primes</TableHead>
+                    <TableHead>Déductions</TableHead>
                     <TableHead>Total</TableHead>
                   </TableRow>
                 </TableHeader>

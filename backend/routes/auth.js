@@ -4,12 +4,12 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const pool = require("../config/database");
 
-// Login route
+// Route de connexion
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Get user from database
+    // Récupérer l'utilisateur de la base de données
     const [users] = await pool.query(
       "SELECT * FROM utilisateur WHERE email = ?",
       [email]
@@ -17,27 +17,27 @@ router.post("/login", async (req, res) => {
 
     const user = users[0];
 
-    // Check if user exists
+    // Vérifier si l'utilisateur existe
     if (!user) {
       return res.status(401).json({
         message: "Email ou mot de passe invalide",
       });
     }
 
-    // Check password
+    // Vérifier le mot de passe
     const isValidPassword = await bcrypt.compare(password, user.mot_de_passe);
     if (!isValidPassword) {
-      console.log("hash isnt valid !");
+      console.log("Le hash n'est pas valide !");
       const hashedPass = bcrypt.hash(password);
       console.log(hashedPass);
       return res.status(401).json({
-        message: "Email ou mot de passe invalide !",
+        message: "Email ou mot de passe invalide",
       });
     } else {
-      console.log("hash is valid !");
+      console.log("Le hash est valide !");
     }
 
-    // Generate JWT token
+    // Générer le token JWT
     const token = jwt.sign(
       {
         userId: user.id,
@@ -48,7 +48,7 @@ router.post("/login", async (req, res) => {
       { expiresIn: "24h" }
     );
 
-    // Send response
+    // Envoyer la réponse
     res.json({
       token,
       user: {
@@ -58,7 +58,7 @@ router.post("/login", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Login error:", error);
+    console.error("Erreur de connexion:", error);
     res.status(500).json({
       message: "Une erreur est survenue lors de la connexion",
     });

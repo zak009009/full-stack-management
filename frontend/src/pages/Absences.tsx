@@ -39,7 +39,7 @@ const Absences: React.FC = () => {
   );
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Chargement...</div>;
   }
 
   if (!user) {
@@ -69,14 +69,14 @@ const Absences: React.FC = () => {
   const handleReport = (id: string) => {
     reportAbsence(id);
     toast({
-      title: "Absence reported",
-      description: "The absence has been marked as reported",
+      title: "Absence signalée",
+      description: "L'absence a été marquée comme signalée",
     });
   };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString();
+    return date.toLocaleDateString("fr-FR");
   };
 
   return (
@@ -87,8 +87,8 @@ const Absences: React.FC = () => {
             <h1 className="text-2xl font-bold">Absences</h1>
             <p className="text-muted-foreground">
               {user.role === "admin" || user.role === "dean"
-                ? "View and manage staff absences"
-                : "View your absence records"}
+                ? "Consulter et gérer les absences du personnel"
+                : "Consulter vos absences"}
             </p>
           </div>
           <div className="flex space-x-2">
@@ -97,20 +97,20 @@ const Absences: React.FC = () => {
               <DropdownMenu>
                 <DropdownMenuTrigger className="flex items-center">
                   {filter === "all"
-                    ? "All Absences"
+                    ? "Toutes les Absences"
                     : filter === "reported"
-                    ? "Reported"
-                    : "Unreported"}
+                    ? "Signalées"
+                    : "Non Signalées"}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => setFilter("all")}>
-                    All Absences
+                    Toutes les Absences
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setFilter("reported")}>
-                    Reported
+                    Signalées
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setFilter("unreported")}>
-                    Unreported
+                    Non Signalées
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -123,17 +123,17 @@ const Absences: React.FC = () => {
             {filteredAbsences.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <div className="text-muted-foreground mb-2">
-                  No absences found
+                  Aucune absence trouvée
                 </div>
               </div>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Employee</TableHead>
+                    <TableHead>Employé</TableHead>
                     <TableHead>Date</TableHead>
-                    <TableHead>Reason</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>Motif</TableHead>
+                    <TableHead>Statut</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -145,16 +145,16 @@ const Absences: React.FC = () => {
                       </TableCell>
                       <TableCell>{formatDate(absence.date)}</TableCell>
                       <TableCell>
-                        {absence.reason || "No reason provided"}
+                        {absence.reason || "Aucun motif fourni"}
                       </TableCell>
                       <TableCell>
                         {absence.reported ? (
                           <Badge className="bg-green-100 text-green-600 hover:bg-green-200 border-green-200">
-                            Reported
+                            Signalée
                           </Badge>
                         ) : (
                           <Badge className="bg-yellow-100 text-yellow-600 hover:bg-yellow-200 border-yellow-200">
-                            Unreported
+                            Non Signalée
                           </Badge>
                         )}
                       </TableCell>
@@ -168,7 +168,7 @@ const Absences: React.FC = () => {
                               onClick={() => handleReport(absence.id)}
                             >
                               <CheckCircle className="h-4 w-4 mr-1" />
-                              Mark as Reported
+                              Marquer comme Signalée
                             </Button>
                           )}
                         </div>
