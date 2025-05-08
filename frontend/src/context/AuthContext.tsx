@@ -1,52 +1,6 @@
-
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, UserRole } from '@/types';
-
-// Mock users for demo purposes
-const MOCK_USERS = [
-  {
-    id: '1',
-    email: 'admin@campus.edu',
-    password: 'admin123',
-    name: 'Admin User',
-    role: 'admin' as UserRole,
-    profileImage: '/avatars/admin.jpg'
-  },
-  {
-    id: '2',
-    email: 'dean@campus.edu',
-    password: 'dean123',
-    name: 'Dean Johnson',
-    role: 'dean' as UserRole,
-    department: 'Computer Science',
-    profileImage: '/avatars/dean.jpg'
-  },
-  {
-    id: '3',
-    email: 'teacher@campus.edu',
-    password: 'teacher123',
-    name: 'Prof. Smith',
-    role: 'teacher' as UserRole,
-    department: 'Mathematics',
-    profileImage: '/avatars/teacher.jpg'
-  },
-  {
-    id: '4',
-    email: 'registrar@campus.edu',
-    password: 'registrar123',
-    name: 'Jane Registrar',
-    role: 'registrar' as UserRole,
-    profileImage: '/avatars/registrar.jpg'
-  },
-  {
-    id: '5',
-    email: 'librarian@campus.edu',
-    password: 'library123',
-    name: 'Mark Librarian',
-    role: 'librarian' as UserRole,
-    profileImage: '/avatars/librarian.jpg'
-  }
-];
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { User, UserRole } from "@/types";
+import axios from "axios";
 
 interface AuthContextType {
   user: User | null;
@@ -59,21 +13,31 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Check for saved user in localStorage
-    const savedUser = localStorage.getItem('campus_user');
-    if (savedUser) {
+    const savedUser = localStorage.getItem("campus_user");
+    const savedToken = localStorage.getItem(
+      import.meta.env.VITE_AUTH_TOKEN_KEY
+    );
+
+    if (savedUser && savedToken) {
       try {
         const parsedUser = JSON.parse(savedUser);
         setUser(parsedUser);
+
+        // Set default authorization header for all future requests
+        axios.defaults.headers.common["Authorization"] = `Bearer ${savedToken}`;
       } catch (e) {
-        console.error('Error parsing saved user', e);
-        localStorage.removeItem('campus_user');
+        console.error("Error parsing saved user", e);
+        localStorage.removeItem("campus_user");
+        localStorage.removeItem(import.meta.env.VITE_AUTH_TOKEN_KEY);
       }
     }
     setIsLoading(false);
@@ -84,24 +48,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setError(null);
 
     try {
-      // Simulate API call with timeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/auth/login`,
+        { email, password }
+      );
 
-      const foundUser = MOCK_USERS.find(u => u.email === email && u.password === password);
-      
-      if (!foundUser) {
-        throw new Error('Invalid email or password');
-      }
+      const { token, user: userData } = response.data;
 
-      // Remove password before storing
-      const { password: _, ...userWithoutPassword } = foundUser;
-      
-      // Save to state and localStorage
-      setUser(userWithoutPassword);
-      localStorage.setItem('campus_user', JSON.stringify(userWithoutPassword));
-      
+      // Save token and user data
+      localStorage.setItem(import.meta.env.VITE_AUTH_TOKEN_KEY, token);
+      localStorage.setItem("campus_user", JSON.stringify(userData));
+
+      // Set default authorization header for all future requests
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      setUser(userData);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      const errorMessage =
+        err instanceof Error ? err.message : "Une erreur est survenue";
+      setError(errorMessage);
       throw err;
     } finally {
       setIsLoading(false);
@@ -109,29 +74,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
-    localStorage.removeItem('campus_user');
+    localStorage.removeItem("campus_user");
+    localStorage.removeItem(import.meta.env.VITE_AUTH_TOKEN_KEY);
+    delete axios.defaults.headers.common["Authorization"];
     setUser(null);
   };
 
   const resetPassword = async (email: string) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
-      // Simulate API call with timeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const userExists = MOCK_USERS.some(u => u.email === email);
-      
-      if (!userExists) {
-        throw new Error('Email not found');
-      }
-      
-      // In a real app, we would send a reset email here
-      console.log(`Password reset link sent to ${email}`);
-      
+      await axios.post(`${import.meta.env.VITE_API_URL}/auth/reset-password`, {
+        email,
+      });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      const errorMessage =
+        err instanceof Error ? err.message : "Une erreur est survenue";
+      setError(errorMessage);
       throw err;
     } finally {
       setIsLoading(false);
@@ -139,7 +99,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, error, login, logout, resetPassword }}>
+    <AuthContext.Provider
+      value={{ user, isLoading, error, login, logout, resetPassword }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -148,7 +110,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

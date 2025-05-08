@@ -9,13 +9,21 @@ router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Récupérer l'utilisateur de la base de données
+    // Récupérer l'utilisateur et son rôle de la base de données
     const [users] = await pool.query(
-      "SELECT * FROM utilisateur WHERE email = ?",
+      `SELECT u.*, r.nom_role 
+       FROM utilisateur u 
+       JOIN role r ON u.role_id = r.id 
+       WHERE u.email = ?`,
       [email]
     );
 
     const user = users[0];
+
+    // Debug logs
+    console.log("Raw database user data:", user);
+    console.log("Role name from database:", user?.nom_role);
+    console.log("Role name type:", typeof user?.nom_role);
 
     // Vérifier si l'utilisateur existe
     if (!user) {
@@ -36,22 +44,30 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign(
       {
         userId: user.id,
+        name: user.nom,
         email: user.email,
-        role: user.role,
+        role: user.nom_role,
       },
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
 
-    // Envoyer la réponse
-    res.json({
+    // Préparer la réponse
+    const responseData = {
       token,
       user: {
         id: user.id,
         email: user.email,
-        role: user.role,
+        name: user.nom,
+        role: user.nom_role,
       },
-    });
+    };
+
+    // Debug log
+    console.log("Final response data:", responseData);
+
+    // Envoyer la réponse
+    res.json(responseData);
   } catch (error) {
     console.error("Erreur de connexion:", error);
     res.status(500).json({

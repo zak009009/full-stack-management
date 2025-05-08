@@ -1,5 +1,9 @@
-
-export type UserRole = 'admin' | 'dean' | 'teacher' | 'registrar' | 'librarian';
+export type UserRole =
+  | "Administrateur"
+  | "Doyen"
+  | "Enseignant"
+  | "Scolarité"
+  | "Bibliothécaire";
 
 export interface User {
   id: string;
@@ -37,9 +41,9 @@ export interface LeaveRequest {
   startDate: string;
   endDate: string;
   reason: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: "pending" | "approved" | "rejected";
   approvedBy?: string;
-  type: 'vacation' | 'sick' | 'personal' | 'other';
+  type: "vacation" | "sick" | "personal" | "other";
 }
 
 export interface Absence {
@@ -68,7 +72,7 @@ export interface ResearchProject {
   description: string;
   userId: string;
   collaborators: string[];
-  status: 'planning' | 'ongoing' | 'completed';
+  status: "planning" | "ongoing" | "completed";
   startDate: string;
   endDate?: string;
   publications?: string[];

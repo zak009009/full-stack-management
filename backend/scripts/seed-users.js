@@ -4,10 +4,10 @@ const pool = require("../config/database");
 
 const users = [
   {
-    nom: "Administrateur",
-    email: "admin@campus.edu",
-    password: "admin123",
-    role: "1",
+    nom: "scolarite",
+    email: "scolarite@campus.edu",
+    password: "scolarite123",
+    role: "4",
   },
 ];
 

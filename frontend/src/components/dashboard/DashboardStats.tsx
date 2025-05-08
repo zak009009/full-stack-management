@@ -1,18 +1,16 @@
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { UserRole } from "@/types";
+import { Card } from "@/components/ui/card";
+import { useAuth } from "@/context/AuthContext";
+import { useData } from "@/context/DataContext";
+import { canAccess } from "@/utils/auth";
 import {
   Users,
   Calendar,
-  ClipboardList,
-  FileText,
   Bell,
-  CheckCircle2,
-  Clock,
-  XCircle,
+  FileText,
+  Book,
+  ClipboardList,
 } from "lucide-react";
-import { useData } from "@/context/DataContext";
-import { useAuth } from "@/context/AuthContext";
 
 const DashboardStats: React.FC = () => {
   const { user } = useAuth();
@@ -20,170 +18,90 @@ const DashboardStats: React.FC = () => {
     leaveRequests,
     absences,
     announcements,
-    researchProjects,
     notifications,
+    researchProjects,
   } = useData();
 
-  if (!user) return null;
-
-  // Filter data based on user role and ID
-  const userLeaveRequests = leaveRequests.filter(
-    (lr) =>
-      user.role === "admin" || user.role === "dean" || lr.userId === user.id
-  );
-
-  const userAbsences = absences.filter(
-    (a) => user.role === "admin" || user.role === "dean" || a.userId === user.id
-  );
-
-  const userAnnouncements = announcements.filter(
-    (a) =>
-      a.forRoles.includes(user.role) ||
-      user.role === "admin" ||
-      user.id === a.createdBy
-  );
-
-  const userResearchProjects =
-    user.role === "teacher"
-      ? researchProjects.filter(
-          (rp) => rp.userId === user.id || rp.collaborators.includes(user.id)
-        )
-      : [];
-
-  const userNotifications = notifications.filter((n) => n.userId === user.id);
-  const unreadNotifications = userNotifications.filter((n) => !n.read);
-
-  // Stats based on leave requests
-  const approvedLeaves = userLeaveRequests.filter(
-    (lr) => lr.status === "approved"
-  ).length;
-  const pendingLeaves = userLeaveRequests.filter(
-    (lr) => lr.status === "pending"
-  ).length;
-  const rejectedLeaves = userLeaveRequests.filter(
-    (lr) => lr.status === "rejected"
-  ).length;
-
-  // Stats based on announcements
-  const pendingAnnouncements =
-    user.role === "admin" ? announcements.filter((a) => !a.approved).length : 0;
-
-  // Stats based on role
   const statsCards = [];
 
-  // Common stats
+  // Statistiques de base pour tous les rôles
   statsCards.push(
     {
-      title: "Demandes de Congé",
-      value: userLeaveRequests.length,
-      icon: Calendar,
-      color: "bg-blue-100 text-blue-600",
-    },
-    {
       title: "Absences",
-      value: userAbsences.length,
-      icon: ClipboardList,
-      color: "bg-red-100 text-red-600",
+      value: absences.length.toString(),
+      icon: <Calendar className="h-6 w-6" />,
+      color: "bg-blue-500",
     },
     {
       title: "Annonces",
-      value: userAnnouncements.length,
-      icon: Bell,
-      color: "bg-amber-100 text-amber-600",
+      value: announcements.length.toString(),
+      icon: <Bell className="h-6 w-6" />,
+      color: "bg-green-500",
     },
     {
       title: "Notifications",
-      value: unreadNotifications.length,
-      icon: Bell,
-      color: "bg-purple-100 text-purple-600",
+      value: notifications.length.toString(),
+      icon: <Bell className="h-6 w-6" />,
+      color: "bg-yellow-500",
     }
   );
 
-  // Role-specific stats
-  if (user.role === "admin" || user.role === "dean") {
+  // Statistiques spécifiques aux rôles
+  if (canAccess(user?.role as any, "leave_requests")) {
+    const pendingRequests = leaveRequests.filter(
+      (request) => request.status === "pending"
+    );
     statsCards.unshift({
       title: "Approbations en Attente",
-      value: pendingLeaves,
-      icon: Clock,
-      color: "bg-orange-100 text-orange-600",
+      value: pendingRequests.length.toString(),
+      icon: <FileText className="h-6 w-6" />,
+      color: "bg-red-500",
     });
   }
 
-  if (user.role === "admin") {
-    statsCards.unshift({
-      title: "Annonces en Attente",
-      value: pendingAnnouncements,
-      icon: Clock,
-      color: "bg-yellow-100 text-yellow-600",
-    });
-  }
-
-  if (user.role === "teacher") {
+  if (canAccess(user?.role as any, "research_projects")) {
+    const userProjects = researchProjects.filter(
+      (project) => project.userId === user?.id
+    );
     statsCards.push({
       title: "Projets de Recherche",
-      value: userResearchProjects.length,
-      icon: FileText,
-      color: "bg-green-100 text-green-600",
+      value: userProjects.length.toString(),
+      icon: <Users className="h-6 w-6" />,
+      color: "bg-purple-500",
+    });
+  }
+
+  if (canAccess(user?.role as any, "library_management")) {
+    statsCards.push({
+      title: "Livres Empruntés",
+      value: "0", // À implémenter
+      icon: <Book className="h-6 w-6" />,
+      color: "bg-indigo-500",
+    });
+  }
+
+  if (canAccess(user?.role as any, "student_registration")) {
+    statsCards.push({
+      title: "Inscriptions en Cours",
+      value: "0", // À implémenter
+      icon: <ClipboardList className="h-6 w-6" />,
+      color: "bg-pink-500",
     });
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {statsCards.map((stat, index) => (
-        <Card key={index} className="dashboard-stat-card">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex justify-between items-center">
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <div className={`p-2 rounded-full ${stat.color}`}>
-                <stat.icon className="h-5 w-5" />
-              </div>
+        <Card key={index} className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">{stat.title}</p>
+              <p className="text-2xl font-semibold mt-1">{stat.value}</p>
             </div>
-          </CardContent>
+            <div className={`p-3 rounded-full ${stat.color}`}>{stat.icon}</div>
+          </div>
         </Card>
       ))}
-
-      {/* Leave Request Status Stats */}
-      <Card className="dashboard-stat-card col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-4">
-        <CardHeader>
-          <CardTitle className="text-md font-medium">
-            État des Demandes de Congé
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-4">
-            <div className="flex items-center">
-              <div className="p-2 rounded-full bg-green-100 text-green-600 mr-2">
-                <CheckCircle2 className="h-5 w-5" />
-              </div>
-              <div>
-                <div className="text-sm text-muted-foreground">Approuvé</div>
-                <div className="text-xl font-semibold">{approvedLeaves}</div>
-              </div>
-            </div>
-            <div className="flex items-center">
-              <div className="p-2 rounded-full bg-amber-100 text-amber-600 mr-2">
-                <Clock className="h-5 w-5" />
-              </div>
-              <div>
-                <div className="text-sm text-muted-foreground">En Attente</div>
-                <div className="text-xl font-semibold">{pendingLeaves}</div>
-              </div>
-            </div>
-            <div className="flex items-center">
-              <div className="p-2 rounded-full bg-red-100 text-red-600 mr-2">
-                <XCircle className="h-5 w-5" />
-              </div>
-              <div>
-                <div className="text-sm text-muted-foreground">Rejeté</div>
-                <div className="text-xl font-semibold">{rejectedLeaves}</div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };

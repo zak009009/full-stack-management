@@ -27,33 +27,15 @@ const LoginForm: React.FC = () => {
     e.preventDefault();
 
     try {
-      // Appel API pour l'authentification
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/auth/login`,
-        {
-          email,
-          password,
-        }
-      );
+      await login(email, password);
 
-      if (response.data.token) {
-        // Stockage du token dans le localStorage
-        localStorage.setItem(
-          import.meta.env.VITE_AUTH_TOKEN_KEY,
-          response.data.token
-        );
+      toast({
+        title: "Connexion réussie",
+        description: "Bienvenue sur le Portail du Personnel",
+      });
 
-        // Mise à jour du contexte d'authentification
-        await login(email, password);
-
-        toast({
-          title: "Connexion réussie",
-          description: "Bienvenue sur le Portail du Personnel",
-        });
-
-        // Navigation vers le tableau de bord approprié
-        navigate("/dashboard");
-      }
+      // Navigation vers le tableau de bord approprié
+      navigate("/dashboard");
     } catch (err: any) {
       toast({
         variant: "destructive",
